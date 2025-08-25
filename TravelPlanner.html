@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Travel Planner</title>
+  <link href="Project.css" rel="stylesheet">
+
+</head>
+<body>
+  <header>
+    <div class="container">
+      <nav>
+        <h2>TravelPlanner</h2>
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#destinations">Destinations</a></li>
+          <li><a href="#planner">Planner</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <section class="hero" id="home">
+    <h1>Plan Your Dream Trip</h1>
+    <p>Discover destinations, set dates, and add activities for a memorable journey!</p>
+    <button onclick="document.getElementById('destinations').scrollIntoView({behavior:'smooth'})">
+      Explore Destinations
+    </button>
+  </section>
+
+  <section class="destinations" id="destinations">
+    <div class="container">
+      <h2>Popular Destinations</h2>
+      <div class="cards">
+        <div class="card">
+          <img src="The_Chitrakote_Falls.jpg" alt="Chitrakot Waterfalls">
+          <h3>Chattisgarh</h3>
+          <p>Full Of Surprises.</p>
+          <button onclick="openForm('Chattisgarh')">Add to Planner</button>
+        </div>
+        <div class="card">
+          <img src="Palitana.jpg" alt="Palitana">
+          <h3>Gujarat</h3>
+          <p>The Fragrance Of Gujarat.</p>
+          <button onclick="openForm('Gujarat')">Add to Planner</button>
+        </div>
+        <div class="card">
+          <img src="Harangi_Elephant_Camp_and_Tree_Park.jpg" alt="Park">
+          <h3>Karnataka</h3>
+          <p>One State.Many Worlds.</p>
+          <button onclick="openForm('Karnataka')">Add to Planner</button>
+        </div>
+        <div class="card">
+          <img src="Munnar_hillstation_kerala.jpg" alt="Munnar">
+          <h3>Kerala</h3>
+          <p>God's own country.</p>
+          <button onclick="openForm('Kerala')">Add to Planner</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="planner" id="planner">
+    <div class="container">
+      <h2>Your Travel Planner</h2>
+      <div id="tripList"></div>
+
+      <div class="trip-form" id="tripForm">
+        <h3 id="formDestination"></h3>
+        <label>Select Date:</label>
+        <input type="date" id="tripDate">
+        
+        <label>Add Activity:</label>
+        <input type="text" id="activityInput" placeholder="Type activity and click 'Add Activity'">
+        <button type="button" onclick="addActivity()">Add Activity</button>
+        
+        <ul id="activityList"></ul>
+        
+        <button type="button" onclick="saveTrip()">Save Trip</button>
+        <button type="button" onclick="cancelForm()">Cancel</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact">
+    <div class="container">
+      <h2>Contact Us</h2>
+      <form>
+        <input type="text" placeholder="Your Name" required>
+        <input type="email" placeholder="Email Address" required>
+        <textarea rows="4" placeholder="Message"></textarea>
+        <button type="submit">Send</button>
+      </form>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 TravelPlanner</p>
+  </footer>
+
+  <script>
+    let trips = [];
+    let currentDestination = "";
+    let activities = [];
+
+    function openForm(destination) {
+      currentDestination = destination;
+      activities = [];
+      document.getElementById("formDestination").innerText = "Plan trip to " + destination;
+      document.getElementById("tripDate").value = "";
+      document.getElementById("activityList").innerHTML = "";
+      document.getElementById("tripForm").style.display = "block";
+      document.getElementById("planner").scrollIntoView({behavior:"smooth"});
+    }
+
+    function addActivity() {
+      let activity = document.getElementById("activityInput").value.trim();
+      if (activity) {
+        activities.push(activity);
+        let li = document.createElement("li");
+        li.textContent = activity;
+        document.getElementById("activityList").appendChild(li);
+        document.getElementById("activityInput").value = "";
+      }
+    }
+
+    function saveTrip() {
+      let date = document.getElementById("tripDate").value;
+      if (!date) { alert("Please select a date."); return; }
+      trips.push({ destination: currentDestination, date, activities: [...activities] });
+      displayTrips();
+      cancelForm();
+    }
+
+    function cancelForm() {
+      document.getElementById("tripForm").style.display = "none";
+    }
+
+    function displayTrips() {
+      let tripList = document.getElementById("tripList");
+      tripList.innerHTML = "";
+      if (trips.length === 0) {
+        tripList.innerHTML = "<p>No trips planned yet. Add some destinations!</p>";
+      }
+      trips.forEach((trip, index) => {
+        let div = document.createElement("div");
+        div.classList.add("trip");
+        div.innerHTML = `
+          <h3>${trip.destination}</h3>
+          <p><strong>Date:</strong> ${trip.date}</p>
+          <div class="activities"><strong>Activities:</strong> ${trip.activities.join(", ") || "None"}</div>
+          <button onclick="removeTrip(${index})">Remove</button>
+        `;
+        tripList.appendChild(div);
+      });
+    }
+
+    function removeTrip(index) {
+      trips.splice(index, 1);
+      displayTrips();
+    }
+  </script>
+</body>
+</html>
